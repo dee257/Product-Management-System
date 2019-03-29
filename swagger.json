@@ -1,0 +1,817 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "API for managing products"
+    },
+    "host": "api.manageproductapi.io",
+    "basePath": "/",
+    "tags": [
+      {
+        "name": "Product",
+        "description": "Product Description"
+      },
+      {
+        "name": "Order",
+        "description": "Order Description"
+      },
+      {
+        "name": "Category",
+        "description": "Category description"
+      },
+      {
+        "name": "Tax",
+        "description": "Tax description"
+      },
+      {
+        "name": "User",
+        "description": "User description"
+      }
+    ],
+    "schemes": [
+      "https"
+    ],
+    "paths": {
+      "/product": {
+        "post": {
+          "tags": [
+            "Product"
+          ],
+          "summary": "Add new product",
+          "description": "To add new product",
+          "operationId": "addProd",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Product to add in store",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          ],
+          "responses": {
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "Product"
+          ],
+          "summary": "Update an existing product",
+          "description": "",
+          "operationId": "updateProd",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Product to add in store",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Prod not found"
+            },
+            "405": {
+              "description": "Validation exception"
+            }
+          }
+        }
+      },
+      "/product/findByStatus": {
+        "get": {
+          "tags": [
+            "Product"
+          ],
+          "summary": "Finds Product by status",
+          "description": "Multiple status values can be provided with comma separated strings",
+          "operationId": "findProdByStatus",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "status",
+              "in": "query",
+              "description": "Status values that need to be considered for filter",
+              "required": true,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "available",
+                  "sold"
+                ],
+                "default": "available"
+              },
+              "collectionFormat": "multi"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Product"
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid status value"
+            }
+          }
+        }
+      },
+      "/product/{prodId}": {
+        "get": {
+          "tags": [
+            "Product"
+          ],
+          "summary": "Find product by ID",
+          "description": "Returns a single product",
+          "operationId": "getProdById",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "prodId",
+              "in": "path",
+              "description": "ID of product to return",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/definitions/Product"
+              }
+            },
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Product not found"
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Product"
+          ],
+          "summary": "Updates product in store",
+          "description": "Updating a product",
+          "operationId": "updateProdWithForm",
+          "consumes": [
+            "application/x-www-form-urlencoded"
+          ],
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "prodId",
+              "in": "path",
+              "description": "ID of prod that needs to be updated",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "name": "name",
+              "in": "formData",
+              "description": "Updated name of the product",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "status",
+              "in": "formData",
+              "description": "Updated status of the product",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Product"
+          ],
+          "summary": "Deletes a product",
+          "description": "Deleting a product",
+          "operationId": "deleteProd",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "prodId",
+              "in": "path",
+              "description": "Product id to delete",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Product not found"
+            }
+          }
+        }
+      },
+      "/product/{prodId}/uploadImage": {
+        "post": {
+          "tags": [
+            "Product"
+          ],
+          "summary": "upload an image",
+          "description": "Image uploading",
+          "operationId": "uploadFile",
+          "consumes": [
+            "multipart/form-data"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "prodId",
+              "in": "path",
+              "description": "ID of product to update",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "name": "file",
+              "in": "formData",
+              "description": "file to upload",
+              "required": false,
+              "type": "file"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "schema": {
+                "$ref": "#/definitions/ApiResponse"
+              }
+            }
+          }
+        }
+      },
+      "/order": {
+        "post": {
+          "tags": [
+            "Order"
+          ],
+          "summary": "Place an order for a product",
+          "description": "Orders",
+          "operationId": "placeOrder",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "order placed for Product",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Order"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/definitions/Order"
+              }
+            },
+            "400": {
+              "description": "Invalid Order"
+            }
+          }
+        }
+      },
+      "/order/{orderId}": {
+        "get": {
+          "tags": [
+            "Order"
+          ],
+          "summary": "Find order by ID",
+          "description": "Finding order",
+          "operationId": "getOrderById",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "orderId",
+              "in": "path",
+              "description": "ID of product that needs to be fetched",
+              "required": true,
+              "type": "integer",
+              "maximum": 10,
+              "minimum": 1,
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "schema": {
+                "$ref": "#/definitions/Order"
+              }
+            },
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Order not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Order"
+          ],
+          "summary": "Delete purchase order by ID",
+          "description": "Deleting Order",
+          "operationId": "deleteOrder",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "orderId",
+              "in": "path",
+              "description": "ID of the order that needs to be deleted",
+              "required": true,
+              "type": "integer",
+              "minimum": 1,
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Order not found"
+            }
+          }
+        }
+      },
+      "/tax/{prodId}": {
+        "get": {
+          "tags": [
+            "Tax"
+          ],
+          "summary": "Find final price by ID",
+          "description": "Final Price",
+          "operationId": "getPrice",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "prodId",
+              "in": "path",
+              "description": "ID of product to return",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "schema": {
+                "$ref": "#/definitions/Price"
+              }
+            },
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Product not found"
+            }
+          }
+        }
+      },
+      "/user": {
+        "post": {
+          "tags": [
+            "User"
+          ],
+          "summary": "Create user",
+          "description": "Creating user",
+          "operationId": "createUser",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Created user object",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "responses": {
+            "default": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/user/login": {
+        "get": {
+          "tags": [
+            "User"
+          ],
+          "summary": "Login",
+          "description": "Login",
+          "operationId": "loginUser",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "username",
+              "in": "query",
+              "description": "The username for login",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "password",
+              "in": "query",
+              "description": "The password for login",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "400": {
+              "description": "Invalid username/password supplied"
+            }
+          }
+        }
+      },
+      "/user/logout": {
+        "get": {
+          "tags": [
+            "User"
+          ],
+          "summary": "Logout",
+          "description": "Logout",
+          "operationId": "logoutUser",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [],
+          "responses": {
+            "default": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/category": {
+        "post": {
+          "tags": [
+            "Category"
+          ],
+          "summary": "Add new category",
+          "description": "To add new category",
+          "operationId": "addCat",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Category to add in store",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Category"
+              }
+            }
+          ],
+          "responses": {
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      },
+      "/category/{catId}": {
+        "get": {
+          "tags": [
+            "Category"
+          ],
+          "summary": "Find category by ID",
+          "description": "Returns a single category",
+          "operationId": "getCatById",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "catId",
+              "in": "path",
+              "description": "ID of category to return",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/definitions/Category"
+              }
+            },
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Category not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Category"
+          ],
+          "summary": "Deletes a category",
+          "description": "Deleting a category",
+          "operationId": "deleteCat",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "delete",
+              "in": "header",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "catId",
+              "in": "path",
+              "description": "Category id to delete",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Category not found"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "uniqueItems": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          "prodId": {
+            "uniqueItems": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "shipDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "description": "Order Status",
+            "enum": [
+              "placed",
+              "approved",
+              "delivered"
+            ]
+          },
+          "complete": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "xml": {
+          "name": "Order"
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
+      "Category": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "example": "Clothing"
+          }
+        }
+      },
+      "Price": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "price": {
+            "type": "number"
+          },
+          "taxprice": {
+            "type": "number"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "photoUrls"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "category": {
+            "$ref": "#/definitions/Category"
+          },
+          "name": {
+            "type": "string",
+            "example": "Jeans"
+          },
+          "price": {
+            "$ref": "#/definitions/Price"
+          },
+          "taxprice": {
+            "type": "number"
+          },
+          "photoUrls": {
+            "type": "array",
+            "xml": {
+              "name": "photoUrl",
+              "wrapped": true
+            },
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "Product status in the store",
+            "enum": [
+              "available",
+              "sold"
+            ]
+          }
+        },
+        "xml": {
+          "name": "Product"
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
